@@ -45,14 +45,14 @@ private:
 	void serialization_node(NodeImg* node);
 	void download_node(NodeImg* node);
 
-	// Serialization using the method Base 128 Varints
-	// It does not work we explain in the last lines
-	//string decToBinary(int n);
-	//int binToDecimal(string s);
-	//string cleanBin(string bin);
-	//string encode(int num);
-	//int count_delimiter(string s);
-	//int decode(string code);
+	// Serialización usando el metodo Base 128 Varints
+	// No fue utilizado en el resultado del proyecto final. Explicamos el porqué en las últimas lineas
+	string decToBinary(int n);
+	int binToDecimal(string s);
+	string cleanBin(string bin);
+	string encode(int num);
+	int count_delimiter(string s);
+	int decode(string code);
 public:
 	Hashmap();
 	~Hashmap();
@@ -538,14 +538,11 @@ void Hashmap::serialization_all() {
 	}
 }
 
-// Serialization where we use Base 128 Varints method
-// This section is commented because generate an error at the moment of push_back
-// tmp_serialize into img_serialize.
-/* 
-#include <iostream>
-#include <string>
-#include <string.h>
-using namespace std;
+// Serialización usando el método de Base 128 Varints method
+// Esta sección no es usada en el proyecto pero es uno de nuestros intentos para generar una serialización
+// a través de la metodología Varints. Esta metodología es usada por la estructura Protobuffers desarrollada por google.
+// No fue utilizado porque genera un error al momento de añadir vectores tmp_serialize al vector img_serialize.
+// El algoritmo requeria demasiado espacio y nos generaba errores constantes.
 
 string decToBinary(int n)
 {
@@ -660,38 +657,39 @@ int decode(string code){
 
 }
 
-vector<vector<string>> img_serialize;
 
-uint8_t *mydata = node->img.data;
-int width = node->img.cols;
-int height = node->img.rows;
-int _stride = node->img.step;//in case cols != strides
-for (int i = 0; i < height; i++)
-{
-	vector<string> tmp_serialize;
-	for (int j = 0; j < width; j++)
+void serialize(NodeImg* node) {
+	vector<vector<string>> img_serialize;
+	uint8_t* mydata = node->img.data;
+	int width = node->img.cols;
+	int height = node->img.rows;
+	int _stride = node->img.step;//in case cols != strides
+	for (int i = 0; i < height; i++)
 	{
-		uint8_t val = mydata[i * _stride + j];
-		int a = val;
-		tmp_serialize.push_back(encode(a));
-		//do whatever you want with your value
+		vector<string> tmp_serialize;
+		for (int j = 0; j < width; j++)
+		{
+			uint8_t val = mydata[i * _stride + j];
+			int a = val;
+			tmp_serialize.push_back(encode(a));
+			//do whatever you want with your value
+		}
+
+		cout << "height" << i << endl;
+		//for (unsigned i = 0; i < tmp_serialize.size(); i++)
+		//	cout << "Value " << encode(tmp_serialize[i]) << endl;
+		img_serialize.push_back(tmp_serialize);
 	}
-	
-	cout << "height" << i << endl;
-	//for (unsigned i = 0; i < tmp_serialize.size(); i++)
-	//	cout << "Value " << encode(tmp_serialize[i]) << endl;
-	img_serialize.push_back(tmp_serialize);
-}
 
 
 
-for (int i = 0; i < height; i++) {
-	for (int j = 0; j < width; j++) {
-		int v = img_serialize[0][0];
-		string a = encode(v);
-		cout << a << endl;
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			int v = img_serialize[0][0];
+			string a = encode(v);
+			cout << a << endl;
+		}
 	}
 }
-*/
 
 #endif
